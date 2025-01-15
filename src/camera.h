@@ -7,6 +7,8 @@
 #include "fb_gfx.h"
 #include "soc/soc.h" // Disable brownout problems
 #include "soc/rtc_cntl_reg.h"  // Disable brownout problems
+#include "FS.h"                // SD Card ESP32
+#include "SD_MMC.h"            // SD Card ESP32
 
 class Camera
 {
@@ -34,4 +36,6 @@ private:
 
 public: 
     void init();
+    void sdInit();
+    void capture();
 };

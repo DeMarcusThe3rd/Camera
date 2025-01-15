@@ -1,5 +1,5 @@
-#include "camserver.h"
 #include "camera.h"
+#include "camserver.h"
 
 const char* ssid = "HelloWorld";
 const char* password = "12345677";
@@ -10,6 +10,7 @@ Camera camera;          //instantiate camera object
 void setup() {
     Serial.begin(115200);
     camera.init();
+    camera.sdInit();
     camServer.serverInit(ssid,password);
 
 }

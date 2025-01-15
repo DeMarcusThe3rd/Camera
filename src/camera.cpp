@@ -96,3 +96,38 @@ void Camera::init() {
     s->set_colorbar(s, 0);  
 }
 
+void Camera::sdInit(){   //initialize sd card
+  if(!SD_MMC.begin("/sd_card", true)){
+    Serial.println("MicroSD card mount failed");
+    return;
+  }
+  
+  uint8_t cardType = SD_MMC.cardType();
+  if(cardType == CARD_NONE){
+    Serial.println("No MicroSD Card found");
+    return;
+  }
+  Serial.println("MicroSD card mounted successfully!");
+}
+
+void Camera::capture(){
+    camera_fb_t *fb = esp_camera_fb_get();
+    if(!fb){
+      Serial.println("Camera capture failed");
+      return;
+    }
+    String path = "/picture" + String(millis()) + ".jpg";  //create jpg file path 
+    File file = SD_MMC.open(path, FILE_WRITE);
+
+    if (!file) {   //error opening file 
+        Serial.println("Failed to open file on SD card");
+        esp_camera_fb_return(fb);
+        return;
+    }
+
+    file.write(fb->buf, fb->len); // Write photo to SD card
+    file.close();
+    esp_camera_fb_return(fb);
+
+    Serial.println("Photo captured and saved: " + path);
+}
