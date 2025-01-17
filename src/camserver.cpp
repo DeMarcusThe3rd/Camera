@@ -21,6 +21,7 @@ void CameraServer::serverInit(const char* ssid, const char* password){   //initi
     server.on("/capture", HTTP_GET, [this](){ this->handleCapture(); });  //handle capture endpoint
     server.on("/list", HTTP_GET, [this](){ this->handleFileList(); });  //handle list endpoint
     server.on("/image", HTTP_GET, [this](){ this->handleImage(); });  //handle image endpoint
+    server.on("/settings", HTTP_GET, [this](){ this->handleSettings(); });  //handle settings endpoint
     server.begin();
     Serial.println("HTTP Server started!");
 }
@@ -35,7 +36,7 @@ void CameraServer::handleFileList(){
     server.send(200, "text/json", json);
 }
 
-void CameraServer::handleImage() {
+void CameraServer::handleImage(){
   String imageFile = "/"+ server.arg("file");
   if (SD_MMC.exists(imageFile)) {
     File file = SD_MMC.open(imageFile);
@@ -50,7 +51,26 @@ void CameraServer::handleImage() {
   }
 }
 
-void CameraServer::handleClient(){   //listent to cilent request 
+void CameraServer::handleSettings(){
+  if (server.hasArg("date") && server.hasArg("time")){
+    String date = server.arg("date");
+    String time = server.arg("time");
+
+      int year, month, day, hour, minute;
+      sscanf(date.c_str(), "%4d-%2d-%2d", &year, &month, &day);
+      sscanf(time.c_str(), "%2d:%2d", &hour, &minute);
+
+      camera.getDateTime().setTime(0, minute, hour, day, month, year);
+
+      server.send(200, "text/plain", "Date and Time Updated Successfully!");
+  }
+
+  else{
+    server.send(400, "text/plain", "Missing Date or Time!");
+  }
+}
+
+void CameraServer::handleClient(){   //listen to cilent request 
     server.handleClient();
 }
 

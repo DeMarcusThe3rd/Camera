@@ -110,14 +110,29 @@ void Camera::sdInit(){   //initialize sd card
   Serial.println("MicroSD card mounted successfully!");
 }
 
+void Camera::createDIR(const char* path){  //creates a directory for that day 
+ if(!SD_MMC.exists(path)){
+    Serial.printf("Creating Directory: %s\n", path);
+    if(SD_MMC.mkdir(path)){
+      Serial.println("Directory created");
+    }
+    else{
+      Serial.println("Directory could not be created");
+    }
+  }
+}
+
 void Camera::capture(){
+  String folderPath = String("/") + dateTime.getTime("%F"); //creates a folder with Y/M/D format 
+  createDIR(folderPath.c_str());
+
   camera_fb_t *fb = esp_camera_fb_get();
   if(!fb){
     Serial.println("Camera capture failed");
     return;
   }
-  String path = "/picture" + String(millis()) + ".jpg";  //create jpg file path 
-  File file = SD_MMC.open(path, FILE_WRITE);
+  String path = folderPath + "/" + dateTime.getTime("%H_%M_%S_") + ".jpg";  //create jpg file path with H:M:S format 
+  File file = SD_MMC.open(path, FILE_WRITE);  //opens file for writing 
 
   if (!file) {   //error opening file 
       Serial.println("Failed to open file on SD card");
@@ -125,32 +140,57 @@ void Camera::capture(){
       return;
   }
 
-  file.write(fb->buf, fb->len); // Write photo to SD card
+  file.write(fb->buf, fb->len); //write photo to SD card
   file.close();
   esp_camera_fb_return(fb);
 
   Serial.println("Photo captured and saved: " + path);
 }
 
-String Camera::createJSONFileList() {
-  String json = "{\"files\":[";
+String Camera::createJSONFileList() {  //scans the sd card, returns a list of file in JSON format 
+  String json = "{";
   File root = SD_MMC.open("/");
-  File file = root.openNextFile();
-  while (file) {
-    if (!file.isDirectory()) {
-      json += "\"" + String(file.name()) + "\"";
-      file = root.openNextFile();
-      if (file && !file.isDirectory()) {
+
+  json += "\"folders\":[";
+  bool firstFolder = true;
+
+  while (File folder = root.openNextFile()) {
+    if (folder.isDirectory()) {
+      if (!firstFolder) {
         json += ",";
       }
-    } else {
-      file = root.openNextFile();
+      firstFolder = false;
+
+      json += "{";
+      json += "\"name\":\"" + String(folder.name()) + "\",";
+      json += "\"files\":[";
+
+      File folderRoot = SD_MMC.open(String("/") + String(folder.name()));
+      if (folderRoot) {
+        bool firstFile = true;
+
+        while (File file = folderRoot.openNextFile()) {
+          if (!firstFile) {
+            json += ",";
+          }
+          firstFile = false;
+
+          json += "\"" + String(file.name()) + "\"";
+        }
+        folderRoot.close();
+      }
+
+      json += "]";
+      json += "}";
     }
   }
-  json += "]}";
+  root.close();
+
+  json += "]";
+  json += "}";
+
   return json;
 }
-
 
 void Camera::getImageFile(File *file, String filePath){
   if(SD_MMC.exists(filePath)){

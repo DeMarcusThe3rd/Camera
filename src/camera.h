@@ -9,6 +9,7 @@
 #include "soc/rtc_cntl_reg.h"  // Disable brownout problems
 #include "FS.h"                // SD Card ESP32
 #include "SD_MMC.h"            // SD Card ESP32
+#include <ESP32Time.h>
 
 class Camera
 {
@@ -33,12 +34,17 @@ private:
     #define PCLK_GPIO_NUM  22
 
     camera_config_t config;
+    ESP32Time dateTime;
 
 public: 
     void init();
     void sdInit();
-    void capture();  //snap picture 
+    void createDIR(const char* path);  //creates a folder of that day 
+    void capture();  //take picture 
     String createJSONFileList();  //scans sd card for all files on it, and returns a json string
-    void getImageFile(File *file, String filePath);
+    void getImageFile(File *file, String filePath); 
 
+    ESP32Time& getDateTime() {
+        return dateTime;
+    }
 };
