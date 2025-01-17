@@ -1,30 +1,30 @@
 #include "camera.h"
 
 void Camera::init() {
-        // Turn-off the 'brownout detector'
-        WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+    // Turn-off the 'brownout detector'
+    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 
-        // OV2640 camera module configuration
-        config.ledc_channel = LEDC_CHANNEL_0;
-        config.ledc_timer = LEDC_TIMER_0;
-        config.pin_d0 = Y2_GPIO_NUM;
-        config.pin_d1 = Y3_GPIO_NUM;
-        config.pin_d2 = Y4_GPIO_NUM;
-        config.pin_d3 = Y5_GPIO_NUM;
-        config.pin_d4 = Y6_GPIO_NUM;
-        config.pin_d5 = Y7_GPIO_NUM;
-        config.pin_d6 = Y8_GPIO_NUM;
-        config.pin_d7 = Y9_GPIO_NUM;
-        config.pin_xclk = XCLK_GPIO_NUM;
-        config.pin_pclk = PCLK_GPIO_NUM;
-        config.pin_vsync = VSYNC_GPIO_NUM;
-        config.pin_href = HREF_GPIO_NUM;
-        config.pin_sccb_sda = SIOD_GPIO_NUM;
-        config.pin_sccb_scl = SIOC_GPIO_NUM;
-        config.pin_pwdn = PWDN_GPIO_NUM;
-        config.pin_reset = RESET_GPIO_NUM;
-        config.xclk_freq_hz = 20000000; // 20 MHz
-        config.pixel_format = PIXFORMAT_JPEG;
+    // OV2640 camera module configuration
+    config.ledc_channel = LEDC_CHANNEL_0;
+    config.ledc_timer = LEDC_TIMER_0;
+    config.pin_d0 = Y2_GPIO_NUM;
+    config.pin_d1 = Y3_GPIO_NUM;
+    config.pin_d2 = Y4_GPIO_NUM;
+    config.pin_d3 = Y5_GPIO_NUM;
+    config.pin_d4 = Y6_GPIO_NUM;
+    config.pin_d5 = Y7_GPIO_NUM;
+    config.pin_d6 = Y8_GPIO_NUM;
+    config.pin_d7 = Y9_GPIO_NUM;
+    config.pin_xclk = XCLK_GPIO_NUM;
+    config.pin_pclk = PCLK_GPIO_NUM;
+    config.pin_vsync = VSYNC_GPIO_NUM;
+    config.pin_href = HREF_GPIO_NUM;
+    config.pin_sccb_sda = SIOD_GPIO_NUM;
+    config.pin_sccb_scl = SIOC_GPIO_NUM;
+    config.pin_pwdn = PWDN_GPIO_NUM;
+    config.pin_reset = RESET_GPIO_NUM;
+    config.xclk_freq_hz = 20000000; // 20 MHz
+    config.pixel_format = PIXFORMAT_JPEG;
 
     // Select lower framesize if the camera doesn't support PSRAM
     if (psramFound()) {
@@ -111,23 +111,53 @@ void Camera::sdInit(){   //initialize sd card
 }
 
 void Camera::capture(){
-    camera_fb_t *fb = esp_camera_fb_get();
-    if(!fb){
-      Serial.println("Camera capture failed");
+  camera_fb_t *fb = esp_camera_fb_get();
+  if(!fb){
+    Serial.println("Camera capture failed");
+    return;
+  }
+  String path = "/picture" + String(millis()) + ".jpg";  //create jpg file path 
+  File file = SD_MMC.open(path, FILE_WRITE);
+
+  if (!file) {   //error opening file 
+      Serial.println("Failed to open file on SD card");
+      esp_camera_fb_return(fb);
       return;
-    }
-    String path = "/picture" + String(millis()) + ".jpg";  //create jpg file path 
-    File file = SD_MMC.open(path, FILE_WRITE);
+  }
 
-    if (!file) {   //error opening file 
-        Serial.println("Failed to open file on SD card");
-        esp_camera_fb_return(fb);
+  file.write(fb->buf, fb->len); // Write photo to SD card
+  file.close();
+  esp_camera_fb_return(fb);
+
+  Serial.println("Photo captured and saved: " + path);
+}
+
+String Camera::createJSONFileList() {
+  String json = "{\"files\":[";
+  File root = SD_MMC.open("/");
+  File file = root.openNextFile();
+  while (file) {
+    if (!file.isDirectory()) {
+      json += "\"" + String(file.name()) + "\"";
+      file = root.openNextFile();
+      if (file && !file.isDirectory()) {
+        json += ",";
+      }
+    } else {
+      file = root.openNextFile();
+    }
+  }
+  json += "]}";
+  return json;
+}
+
+
+void Camera::getImageFile(File *file, String filePath){
+  if(SD_MMC.exists(filePath)){
+      *file = SD_MMC.open(filePath);
+      if(!(*file)){
+        Serial.println("Failed to open image file");
         return;
-    }
-
-    file.write(fb->buf, fb->len); // Write photo to SD card
-    file.close();
-    esp_camera_fb_return(fb);
-
-    Serial.println("Photo captured and saved: " + path);
+      }
+  }
 }

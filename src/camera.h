@@ -37,5 +37,8 @@ private:
 public: 
     void init();
     void sdInit();
-    void capture();
+    void capture();  //snap picture 
+    String createJSONFileList();  //scans sd card for all files on it, and returns a json string
+    void getImageFile(File *file, String filePath);
+
 };

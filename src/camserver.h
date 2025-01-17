@@ -23,4 +23,6 @@ public:
     void serverInit(const char* ssid, const char* password);      //initialize server 
     void handleClient();
     void handleCapture();
+    void handleFileList();
+    void handleImage();
 };
