@@ -16,6 +16,8 @@ private:
     Camera camera; //camera instance 
     WebServer server;  //esp webserver instance
 
+    
+
 public:
     CameraServer(uint16_t port = 80) : server(port){};     //constructor  
     void wifiInit(const char* ssid, const char* password);  //initialize wifi 
@@ -26,4 +28,5 @@ public:
     void handleFileList();
     void handleImage();
     void handleSettings();
+    void handleStream();
 };

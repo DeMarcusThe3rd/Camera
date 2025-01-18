@@ -39,11 +39,13 @@ private:
 public: 
     void init();
     void sdInit();
+    void run();
     void createDIR(const char* path);  //creates a folder of that day 
     void capture();  //take picture 
     String createJSONFileList();  //scans sd card for all files on it, and returns a json string
     void getImageFile(File *file, String filePath); 
-
+    camera_fb_t* captureFrame();
+    void releaseFrame(camera_fb_t* frame);
     ESP32Time& getDateTime() {
         return dateTime;
     }

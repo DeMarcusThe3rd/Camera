@@ -102,6 +102,11 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
+.sidebar input[type="submit"]:hover {
+    background-color: #1A237E;
+    color: white;
+}
+
 .download-button {
     background-color: #3f51b5; /* Primary color */
     color: white;
@@ -116,11 +121,6 @@ body {
 
 .download-button:hover {
     background-color: #1a237e; /* Darker shade for hover */
-    color: white;
-}
-
-.sidebar input[type="submit"]:hover {
-    background-color: #1A237E;
     color: white;
 }
 
@@ -216,6 +216,7 @@ body {
             <!-- Views to switch between -->
             <div class="view" id="view-camera">
                 <div class="camera-window">
+                <img id="vidstream" src= ""></img>
                 </div>
             </div>
             <div class="view" id="download-view">
@@ -304,6 +305,8 @@ body {
       }
         // Load file list when the page is loaded
         window.onload = loadFileList;
+        window.onload = document.getElementById("vidstream").src = window.location.href.slice(0, -1) + ":80/stream";
       </script>
 </body>
 </html>
+

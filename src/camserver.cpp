@@ -22,6 +22,7 @@ void CameraServer::serverInit(const char* ssid, const char* password){   //initi
     server.on("/list", HTTP_GET, [this](){ this->handleFileList(); });  //handle list endpoint
     server.on("/image", HTTP_GET, [this](){ this->handleImage(); });  //handle image endpoint
     server.on("/settings", HTTP_GET, [this](){ this->handleSettings(); });  //handle settings endpoint
+    server.on("/stream", HTTP_GET, [this](){ this->handleStream(); });  //handle settings endpoint
     server.begin();
     Serial.println("HTTP Server started!");
 }
@@ -67,6 +68,36 @@ void CameraServer::handleSettings(){
 
   else{
     server.send(400, "text/plain", "Missing Date or Time!");
+  }
+}
+
+void CameraServer::handleStream(){
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+  server.send(200, "multipart/x-mixed-replace; boundary=123456789000000000000987654321\r\n");
+
+  while (true) {
+    // Check if the client is still connected
+    if (!server.client().connected()) {
+        break;
+    }
+
+    camera_fb_t* frame = camera.captureFrame();
+    if (!frame) {
+        Serial.println("Failed to capture frame");
+        break;
+    }
+
+    String header = "--123456789000000000000987654321\r\n"
+                    "Content-Type: image/jpeg\r\n"
+                    "Content-Length: " + String(frame->len) + "\r\n\r\n";
+    server.client().write(header.c_str(), header.length());
+    server.client().write(frame->buf, frame->len);
+    server.client().write("\r\n");
+
+    // Release the frame buffer
+    camera.releaseFrame(frame);
+
   }
 }
 

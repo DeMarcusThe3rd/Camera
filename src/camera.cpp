@@ -147,6 +147,16 @@ void Camera::capture(){
   Serial.println("Photo captured and saved: " + path);
 }
 
+camera_fb_t* Camera::captureFrame(){
+    return esp_camera_fb_get();
+}
+
+void Camera::releaseFrame(camera_fb_t* frame){
+  if (frame) {
+    esp_camera_fb_return(frame);
+  }
+}
+
 String Camera::createJSONFileList() {  //scans the sd card, returns a list of file in JSON format 
   String json = "{";
   File root = SD_MMC.open("/");
