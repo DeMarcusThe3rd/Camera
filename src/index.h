@@ -135,7 +135,6 @@ body {
     border-radius: 8px;       /* Optional: Rounded corners */
     padding: 10px;            /* Optional: Space between the content and border */
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add a subtle shadow */
-    max-width: 480px;         /* Match the image width */
     margin: auto;             /* Center the container horizontally */
 }
 
@@ -144,7 +143,6 @@ body {
     border-radius: 8px;       /* Optional: Rounded corners */
     padding: 10px;            /* Optional: Space between the content and border */
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add a subtle shadow */
-    max-width: 480px;         /* Match the image width */
     margin: auto;             /* Center the container horizontally */
 }
 
@@ -230,7 +228,7 @@ body {
                   <div id="image-container">
                     <h3>Selected Image:</h3>
                     <br>
-                    <img id="selected-image" src="" alt="Image will be displayed here" height="640" width="480"/>
+                    <img id="selected-image" src="" alt="Image will be displayed here"/>
                     </div>
                     <br>
                   <button id="download-button" class="download-button" onclick="downloadImage()">
