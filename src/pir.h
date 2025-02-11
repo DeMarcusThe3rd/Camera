@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <ESP32Time.h>
+#include "camera.h"
 
 class PIR {
     private:
@@ -10,5 +11,6 @@ class PIR {
         PIR(int pin);
 
         void init();
-        void movementDetected();
+        void detectMovement(Camera *camera);
+        void movementDetected(Camera *camera);
 };

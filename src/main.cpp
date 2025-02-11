@@ -2,13 +2,13 @@
 #include "camserver.h"
 #include "pir.h"
 
-const char* ssid = "HelloWorld";
-const char* password = "12345677";
+const char* ssid = "Happyland";
+const char* password = "afza5431";
 
 CameraServer camServer; //create a server for the camera on port 80
 Camera camera;          //instantiate camera object 
 
-PIR PIR(8); // placeholder number, please change to actual PIR pin number cos i don't have any hardware on me to test - max
+PIR pir(13); // PIR sensor pin 13 on prototype board
 
 void setup() {
     Serial.begin(115200);
@@ -22,6 +22,5 @@ void setup() {
 
 void loop() {
     camServer.handleClient();
-
-    // call the movement detected somewhere here
+    pir.detectMovement(&camera);
 }
