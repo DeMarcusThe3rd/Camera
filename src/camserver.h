@@ -10,6 +10,7 @@
 #include "index.h"
 #include "camera.h"
 
+
 class CameraServer
 {
 private:
