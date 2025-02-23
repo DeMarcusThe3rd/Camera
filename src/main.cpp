@@ -2,8 +2,8 @@
 #include "camserver.h"
 #include "pir.h"
 
-const char* ssid = "Happyland";
-const char* password = "afza5431";
+const char* ssid = "HelloWorld";
+const char* password = "12345677";
 
 CameraServer camServer; //create a server for the camera on port 80
 Camera camera;          //instantiate camera object 
