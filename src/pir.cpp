@@ -25,5 +25,15 @@ void PIR::detectMovement(Camera *camera){
 
 void PIR::movementDetected(Camera *camera){
     digitalWrite(4, HIGH);
-    camera->capture();
+    unsigned long previousTime = millis(); //start timing 
+
+    for(int i=0;i<camera->getpics_num();i++){
+        unsigned long currentTime = millis();
+        while(currentTime - previousTime < camera->getpics_interval()){
+            currentTime = millis();  //update time until after interval
+        }
+        camera->capture();
+        previousTime = currentTime;
+    }
+
 }
