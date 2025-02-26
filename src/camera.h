@@ -35,8 +35,8 @@ private:
 
     camera_config_t config;
     ESP32Time dateTime;
-    int pics_num;
-    unsigned long pics_interval;
+    int pics_num=1;
+    unsigned long pics_interval=1;
 
 public: 
     void init();
@@ -54,7 +54,15 @@ public:
         this->pics_num = pics_num;
     }
 
+    int getpics_num(){
+        return pics_num;
+    }
+
     void setpics_interval(unsigned long pics_interval){
         this->pics_interval = pics_interval;
+    }
+
+    unsigned long getpics_interval(){
+        return pics_interval;
     }
 };

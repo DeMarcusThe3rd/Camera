@@ -26,10 +26,16 @@ void PIR::detectMovement(Camera *camera){
 void PIR::movementDetected(Camera *camera){
     digitalWrite(4, HIGH);
     unsigned long previousTime = millis(); //start timing 
-
+    int x = camera->getpics_num();
+    unsigned long y = camera->getpics_interval();
+    Serial.print("Pic Number is ");
+    Serial.println(x);
+    
+    Serial.print("Pic Interval is ");
+    Serial.println(y);
     for(int i=0;i<camera->getpics_num();i++){
         unsigned long currentTime = millis();
-        while(currentTime - previousTime < camera->getpics_interval()){
+        while(currentTime - previousTime < y){
             currentTime = millis();  //update time until after interval
         }
         camera->capture();
