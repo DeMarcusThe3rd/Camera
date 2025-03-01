@@ -37,6 +37,7 @@ private:
     ESP32Time dateTime;
     int pics_num=1;
     unsigned long pics_interval=1;
+    bool on_cooldown = true;
 
 public: 
     void init();
@@ -65,4 +66,14 @@ public:
     unsigned long getpics_interval(){
         return pics_interval;
     }
+
+    bool get_cooldown(){
+        return on_cooldown;
+    }
+
+    void set_cooldown(bool on_cooldown){
+        this->on_cooldown = on_cooldown;
+    }
+
+
 };

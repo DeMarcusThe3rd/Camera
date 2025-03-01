@@ -24,22 +24,22 @@ void PIR::detectMovement(Camera *camera){
 }
 
 void PIR::movementDetected(Camera *camera){
-    digitalWrite(4, HIGH);
-    unsigned long previousTime = millis(); //start timing 
-    int x = camera->getpics_num();
-    unsigned long y = camera->getpics_interval();
-    Serial.print("Pic Number is ");
-    Serial.println(x);
-    
-    Serial.print("Pic Interval is ");
-    Serial.println(y);
-    for(int i=0;i<camera->getpics_num();i++){
-        unsigned long currentTime = millis();
-        while(currentTime - previousTime < y){
-            currentTime = millis();  //update time until after interval
+    static unsigned long previousTime = 0; 
+
+    if(camera->get_cooldown()==false){   //if cooldown is true, means still in cooldown mode, false means ready to take pic
+        for(int i=0;i<camera->getpics_num();i++){
+            digitalWrite(4, HIGH);
+            camera->capture();
+
+            previousTime = millis();
+            while(millis() - previousTime <= 1500){  //wait for 1.5 seconds
+            }
         }
-        camera->capture();
-        previousTime = currentTime;
+        camera->set_cooldown(true);
+        previousTime = millis(); //start cooldown timer
     }
 
+    if(millis() - previousTime >= camera->getpics_interval()){  //if the cooldown is over, camera is ready to take pic again 
+        camera->set_cooldown(false); 
+    }
 }
