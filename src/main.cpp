@@ -5,8 +5,8 @@
 const char* ssid = "HelloWorld";
 const char* password = "12345677";
 
-CameraServer camServer; //create a server for the camera on port 80
 Camera camera;          //instantiate camera object 
+CameraServer camServer(&camera); //create a server for the camera on port 80
 
 PIR pir(13); // PIR sensor pin 13 on prototype board
 

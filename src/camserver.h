@@ -14,11 +14,11 @@
 class CameraServer
 {
 private:
-    Camera camera; //camera instance 
+    Camera *camera;
     WebServer server;  //esp webserver instance
 
 public:
-    CameraServer(uint16_t port = 80) : server(port){};     //constructor  
+    CameraServer(Camera *cam,uint16_t port = 80) : camera(cam),server(port){};     //constructor  
     void wifiInit(const char* ssid, const char* password);  //initialize wifi 
     void handleRoot();      //handle on root (serves the first html page)
     void serverInit(const char* ssid, const char* password);      //initialize server 

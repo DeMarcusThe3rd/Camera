@@ -27,12 +27,12 @@ void CameraServer::serverInit(const char* ssid, const char* password){   //initi
 }
 
 void CameraServer::handleCapture(){  // Handle "/capture" endpoint for taking a photo
-    camera.capture();  // Call the capture method from the Camera class
+    camera->capture();  // Call the capture method from the Camera class
     server.send(200, "text/plain", "Photo captured successfully");
 }
 
 void CameraServer::handleFileList(){
-    String json = camera.createJSONFileList();
+    String json = camera->createJSONFileList();
     server.send(200, "text/json", json);
 }
 
@@ -59,19 +59,19 @@ void CameraServer::handleSettings(){
     int year, month, day, hour, minute;
     sscanf(date.c_str(), "%4d-%2d-%2d", &year, &month, &day);
     sscanf(time.c_str(), "%2d:%2d", &hour, &minute);
-    camera.getDateTime().setTime(0, minute, hour, day, month, year);
+    camera->getDateTime().setTime(0, minute, hour, day, month, year);
 
     //parsing number of pictures field
     String numPics = server.arg("numPics");
     int picNum;
     sscanf(numPics.c_str(),"%d",&picNum);
-    camera.setpics_num(picNum);
+    camera->setpics_num(picNum);
 
     //parsing picture interval field
     String intervalPics = server.arg("delayTime");
     float picInterval = intervalPics.toFloat();
     unsigned long pics_interval = picInterval*60000;
-    camera.setpics_interval(pics_interval);
+    camera->setpics_interval(pics_interval);
 
     server.send(200, "text/plain", "All fields updated!");
   }
