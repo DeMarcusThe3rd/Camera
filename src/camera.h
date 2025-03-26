@@ -43,6 +43,7 @@ public:
     void init();
     void sdInit();
     void createDIR(const char* path);  //creates a folder of that day 
+    void clearCapture();
     void capture();  //take picture 
     String createJSONFileList();  //scans sd card for all files on it, and returns a json string
     void getImageFile(File *file, String filePath); 

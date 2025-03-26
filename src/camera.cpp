@@ -122,7 +122,18 @@ void Camera::createDIR(const char* path){  //creates a directory for that day
   }
 }
 
+void Camera::clearCapture(){  //function to clear the first frame buffer on capture 
+  camera_fb_t *fb = esp_camera_fb_get();
+  if(!fb){
+    Serial.println("Camera capture failed");
+    return;
+  }
+  esp_camera_fb_return(fb);
+  Serial.println("First frame buffer cleared.");
+}
+
 void Camera::capture(){
+  clearCapture();
   String folderPath = String("/") + dateTime.getTime("%F"); //creates a folder with Y/M/D format 
   createDIR(folderPath.c_str());
 
