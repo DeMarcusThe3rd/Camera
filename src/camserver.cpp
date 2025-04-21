@@ -1,14 +1,9 @@
 #include "camserver.h"
 
 void CameraServer::wifiInit(const char* ssid, const char* password){  //connects to wifi 
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.println("Connecting to Wi-Fi...");
-    }
-    Serial.println("Connected to Wi-Fi!");
-    Serial.print("IP Address: ");   
-    Serial.println(WiFi.localIP()); //ip address for esp32 (webserver)
+    WiFi.softAP(ssid, password);
+    Serial.print("AP IP address: ");
+    Serial.println(WiFi.softAPIP());
 }
 
 void CameraServer::handleRoot(){   //handle "/" (root endpoint) case  

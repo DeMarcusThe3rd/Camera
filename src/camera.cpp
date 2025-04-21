@@ -125,7 +125,7 @@ void Camera::createDIR(const char* path){  //creates a directory for that day
 void Camera::clearCapture(){  //function to clear the first frame buffer on capture 
   camera_fb_t *fb = esp_camera_fb_get();
   if(!fb){
-    Serial.println("Camera capture failed");
+    Serial.println("Camera clear capture failed");
     return;
   }
   esp_camera_fb_return(fb);

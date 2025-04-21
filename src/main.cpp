@@ -2,8 +2,8 @@
 #include "camserver.h"
 #include "pir.h"
 
-const char* ssid = "HelloWorld";
-const char* password = "12345677";
+const char* ssid = "ESP32-CAM Access Point";
+const char* password = "123456789";
 
 Camera camera;          //instantiate camera object 
 CameraServer camServer(&camera); //create a server for the camera on port 80
@@ -23,4 +23,6 @@ void setup() {
 void loop() {
     camServer.handleClient();
     pir.detectMovement(&camera);
+    Serial.print("AP IP address: ");
+    Serial.println(WiFi.softAPIP());
 }
